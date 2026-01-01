@@ -22,8 +22,8 @@ public class SpellManager : MonoBehaviour
             if (spell.spellID == ID)
             {
                 Spell spellInstance = Instantiate(spell.spellPrefab);
-                if (ID >= 1 && ID <= 3) 
-                    spellInstance.transform.GetComponent<AoeSpell>().SetPlayer(Player);
+                if (ID == 3) 
+                    spellInstance.transform.GetComponent<IceSpell>().SetPlayer(Player);
                 spellInstance.Cast(Player.transform.position, strength);
             }
         }

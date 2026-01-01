@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Project.Scripts.GameLogic;
 using Project.Scripts.PlayerLogic.Drawing;
 using Project.Scripts.UI;
@@ -25,6 +26,7 @@ namespace Project.Scripts.PlayerLogic
         private int cyclePoints = 0, maxPoints = 0;
         [SerializeField] private TMP_Text pointsText;
         [SerializeField] private GameObject MainMenu, GameMenu;
+        private Camera mainCamera;
 
         [Header("HP")]
         [SerializeField] private LayerMask mushroomLayer;
@@ -41,9 +43,13 @@ namespace Project.Scripts.PlayerLogic
         [SerializeField] private LayerMask birchLayer;
         private bool isFell = false;
         [SerializeField] private int birchBackCount;
-        [SerializeField] private int maxBirchBackCount;
+        /*[SerializeField] private int maxBirchBackCount;*/
         [SerializeField] private TMP_Text birchText;
         [SerializeField] private List<AudioSource> birchSound;
+        [SerializeField] private GameObject birchBarkIcon, Canvas;
+        [SerializeField] private Vector3 startBirchBarkPos, endBirchBarkPos;
+        [SerializeField] private GameObject clickIcon;
+        [SerializeField] private GameObject textSpace;
 
         public void IncreaseHp(int value)
         {
@@ -88,15 +94,37 @@ namespace Project.Scripts.PlayerLogic
         }
         public void IncreaseBirchBackCount(int value)
         {
-            if (birchBackCount + value >= maxBirchBackCount)
+            /*if (birchBackCount + value >= maxBirchBackCount)
                 birchBackCount = maxBirchBackCount;
-            else birchBackCount += value;
+            else */birchBackCount += value;
         }
-        public void IncreaseMaxBirchBackCount(int value)
+        /*public void IncreaseMaxBirchBackCount(int value)
         {
             maxBirchBackCount += value;
-        }
+        }*/
 
+        public void IncludeIcon()
+        {
+            StartCoroutine(Include());
+        }
+        IEnumerator Include()
+        {
+            GameObject icon = Instantiate(birchBarkIcon, startBirchBarkPos, Quaternion.identity);
+            icon.transform.SetParent(Canvas.transform);
+            icon.transform.localPosition = startBirchBarkPos;
+            icon.transform.DOLocalMove(endBirchBarkPos, 0.5f);
+            yield return new WaitForSeconds(0.5f);
+            Destroy(icon);
+            textSpace.SetActive(true);
+            for (int i = 0; i < 4; i++)
+            {
+                textSpace.transform.DOScale(new Vector3(0.8f, 0.8f, 0.8f), 0.3f);
+                yield return new WaitForSeconds(0.3f);
+                textSpace.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.3f);
+                yield return new WaitForSeconds(0.3f);
+            }
+            textSpace.SetActive(false);
+        }
 
         private void Awake()
         {
@@ -105,13 +133,15 @@ namespace Project.Scripts.PlayerLogic
             cyclePoints = 0;
             pointsText.text = cyclePoints.ToString();
             birchBackCount = 0;
+            
+            mainCamera = Camera.main;
         }
 
         private void Update()
         {
-            birchText.text = birchBackCount.ToString() + "/" + maxBirchBackCount.ToString();
+            birchText.text = birchBackCount.ToString()/* + "/" + maxBirchBackCount.ToString()*/;
 
-            playerHP.transform.LookAt(Camera.main.transform);
+            playerHP.transform.LookAt(mainCamera.transform);
         }
 
         IEnumerator Death()
@@ -135,6 +165,8 @@ namespace Project.Scripts.PlayerLogic
             if (cyclePoints >= maxPoints)
                 PlayerPrefs.SetInt("MaxPoints", cyclePoints);
             
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
             GameMenu.SetActive(false);
             MainMenu.SetActive(true);
         }
@@ -156,7 +188,7 @@ namespace Project.Scripts.PlayerLogic
                 else if (other.gameObject != currentTile.gameObject)
                 {
                     TileComponent newTile = other.gameObject.GetComponentInParent<TileComponent>();
-                    mapBuilder.GridShift(newTile.IndexI - currentTile.IndexI, newTile.IndexJ - currentTile.IndexJ);
+                    /*mapBuilder.GridShift(newTile.IndexI - currentTile.IndexI, newTile.IndexJ - currentTile.IndexJ);*/
                     currentTile = newTile;
                 }
             }
@@ -167,11 +199,27 @@ namespace Project.Scripts.PlayerLogic
             if (birch.gameObject.layer == LayerMask.NameToLayer("Birch") /*&&  lineGeneration.enabled == false*/)
             {
                 birch.transform.GetComponentInParent<BirchComponent>().SetHP();
+                if (!isClicked) StartCoroutine(Click());
 
-                if (Input.GetMouseButton(1) && !isFell)
+                if (Input.GetMouseButton(0) && !isFell)
                 {
+                    clickIcon.SetActive(false);
                     StartCoroutine(Fell(birch.gameObject));
                 }
+            }
+        }
+
+        private bool isClicked = false;
+        private IEnumerator Click()
+        {
+            isClicked = true;
+            clickIcon.SetActive(true);
+            for (int i = 0; i < 4; i++)
+            {
+                clickIcon.transform.DOScale(new Vector3(-0.8f, 0.8f, 0.8f), 0.3f);
+                yield return new WaitForSeconds(0.3f);
+                clickIcon.transform.DOScale(new Vector3(-1.2f, 1.2f, 1.2f), 0.3f);
+                yield return new WaitForSeconds(0.3f);
             }
         }
         private IEnumerator Fell(GameObject birch)
@@ -180,9 +228,9 @@ namespace Project.Scripts.PlayerLogic
             playerMovement.SetHit(true);
             int chance = Random.Range(0, birchSound.Count);
             birchSound[chance].Play();
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.4f);
             birch.transform.GetComponentInParent<BirchComponent>().ClickBirch(this);
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.4f);
             playerMovement.SetHit(false);
             isFell = false;
         }

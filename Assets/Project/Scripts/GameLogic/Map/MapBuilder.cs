@@ -7,7 +7,7 @@ namespace Project.Scripts.GameLogic
 {
     public class MapBuilder : MonoBehaviour
     {
-        private static int Size = 5;
+        private static int Size = 20;
         
         [SerializeField] private GameObject tilePrefab;
         [SerializeField] private float tileSize;
@@ -21,7 +21,6 @@ namespace Project.Scripts.GameLogic
         private void Start()
         {
             surface = GetComponent<NavMeshSurface>();
-            
             for (int i = 0; i < Size; i++)
             {
                 for (int j = 0; j < Size; j++)
@@ -36,7 +35,7 @@ namespace Project.Scripts.GameLogic
                     Grid[i * Size + j].transform.GetComponent<TileComponent>().IndexJ = j;
                 }
             }
-            surface.BuildNavMesh();
+            
             int pInd = (Size)/ 2;
             Player.transform.position = new Vector3(Grid[pInd * Size + pInd].transform.position.x, 
                 Player.transform.position.y, Grid[pInd * Size + pInd].transform.position.z);

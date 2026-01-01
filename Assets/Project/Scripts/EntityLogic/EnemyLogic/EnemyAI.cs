@@ -5,18 +5,18 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
     [Header("Navigation")]
-    private Transform player;
+    [SerializeField] private Transform player;
     private NavMeshAgent agent;
 
     [Header("Combat")] 
     [SerializeField] private float speed;
-    [SerializeField] private float attackRange = 2f;
+    [SerializeField] private float attackRange = 3f;
     [SerializeField] private float attackCooldown = 1f;
     [SerializeField] private int damage = 10;
     [SerializeField] private ParticleSystem hit;
     
     [Header("Detection")]
-    [SerializeField] private float detectionRange = 15f;
+    [SerializeField] private float detectionRange = 25f;
     
     private float lastAttackTime;
     private bool isAttacking = false;
@@ -24,10 +24,17 @@ public class EnemyAI : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        
+
+        detectionRange = 50;
+        attackRange = 1f;
         agent.speed = speed;
-        agent.stoppingDistance = attackRange - 0.2f;
+        agent.stoppingDistance = attackRange - 0.1f;
     }
+    public void UpdateSpeed(float factor)
+    {
+        agent.speed = speed * factor;
+    }
+    
     public void SetPlayer(Transform _player)
     {
         player = _player;
@@ -45,7 +52,8 @@ public class EnemyAI : MonoBehaviour
         
         if (distanceToPlayer <= detectionRange)
         {
-            ChasePlayer();
+            if (distanceToPlayer >= attackRange)
+                ChasePlayer();
             
             if (distanceToPlayer <= attackRange && CanAttack())
             {

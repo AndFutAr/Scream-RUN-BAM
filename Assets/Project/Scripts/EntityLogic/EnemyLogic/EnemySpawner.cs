@@ -27,13 +27,13 @@ namespace Project.Scripts.GameLogic.Spawners
             }
         }
         
-        public void SpawnEnemy()
+        public void SpawnEnemy(float count)
         {
-            StartCoroutine(SpawnerEnemy());
+            StartCoroutine(SpawnerEnemy(count));
         }
-        public IEnumerator SpawnerEnemy()
+        public IEnumerator SpawnerEnemy(float _count)
         {
-            count = 1;
+            count = (int)_count;
             for (int i = 0; i < count; i++)
             {
                 yield return new WaitForSeconds(spawnRate);

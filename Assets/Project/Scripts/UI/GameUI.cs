@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,13 @@ using UnityEngine.SceneManagement;
 public class GameUI : MonoBehaviour
 {
    [SerializeField] private List<AudioSource> buttonSound;
-   
+
+   private void Start()
+   {
+      Cursor.lockState = CursorLockMode.Confined;
+      Cursor.visible = false;
+   }
+
    public void RestartGame()
    {
       StartCoroutine(Restart());

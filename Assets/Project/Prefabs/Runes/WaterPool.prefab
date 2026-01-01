@@ -46,12 +46,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0496c9a42067433a8b552c6a3968473c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AoeSpell
-  spellType: 1
+  spellType: 5
+  damageEffect: 3
   center: {x: 0, y: 0, z: 0}
   duration: 5
   radius: 4
-  damage: 3
+  damage: 1
   effectPrefab: {fileID: 8835141773875421944, guid: c28731ef5c1255141926312c58996487, type: 3}
+  enemyEffectPrefab: {fileID: 0}
   spellStartSound:
   - {fileID: 8631572773534549291}
   - {fileID: 4388357072870421055}

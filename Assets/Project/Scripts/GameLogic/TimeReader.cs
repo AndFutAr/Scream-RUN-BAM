@@ -10,6 +10,7 @@ namespace Project.Scripts.GameLogic
     {
         private bool isGame = true;
         public void GameOver() => isGame = false;
+        private float difficultFactor;
         
         [SerializeField] private int enemyCooldown;
         [SerializeField] private List<AudioSource> startSound, endSound;
@@ -32,6 +33,9 @@ namespace Project.Scripts.GameLogic
         private void NewGame()
         {
             isGame = true;
+            difficultFactor = 1;
+            
+            
             StartCoroutine(MushroomSpawner());
             StartCoroutine(EnemySpawner());
             StartCoroutine(GetPoints());
@@ -51,11 +55,20 @@ namespace Project.Scripts.GameLogic
             endSound[chance].Play();
         }
 
-        IEnumerator MushroomSpawner()
+        IEnumerator IncreaseDifficult()
         {
             while (isGame)
             {
                 yield return new WaitForSeconds(15);
+                difficultFactor += 1f;
+            }
+        }
+
+        IEnumerator MushroomSpawner()
+        {
+            while (isGame)
+            {
+                yield return new WaitForSeconds(12);
                 mushroomSpawner.SpawnMushroom();
             }
         }
@@ -64,7 +77,8 @@ namespace Project.Scripts.GameLogic
             while(isGame)
             {
                 yield return new WaitForSeconds(enemyCooldown);
-                enemySpawner.SpawnEnemy();
+                enemySpawner.SpawnEnemy(difficultFactor);
+                break;
             }
         }
 

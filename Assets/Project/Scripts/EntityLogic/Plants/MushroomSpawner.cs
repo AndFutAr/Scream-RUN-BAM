@@ -17,22 +17,28 @@ namespace Project.Scripts.GameLogic.Spawners
         {
             StartCoroutine(SpawnerMushroom());
         }
+        
         public IEnumerator SpawnerMushroom()
         {
             count = 1;
             for (int i = 0; i < count; i++)
             {
-                Vector2 randomCircle = Random.insideUnitCircle.normalized * minRadius;
-                Vector3 spawnPosition = player.position + new Vector3(randomCircle.x, 0, randomCircle.y);
-        
-                float randomDistance = Random.Range(minRadius, maxRadius);
-        
-                spawnPosition = player.position + (spawnPosition - player.position).normalized * randomDistance;
-                spawnPosition.y = 0;
-
-                GameObject mushroom = Instantiate(mushroomPrefab, spawnPosition, Quaternion.identity);
+                Spawn();
                 yield return new WaitForSeconds(spawnRate);
             }
+        }
+        public void Spawn()
+        {
+            Vector2 randomCircle = Random.insideUnitCircle.normalized * minRadius;
+            Vector3 spawnPosition = player.position + new Vector3(randomCircle.x, 0, randomCircle.y);
+        
+            float randomDistance = Random.Range(minRadius, maxRadius);
+        
+            spawnPosition = player.position + (spawnPosition - player.position).normalized * randomDistance;
+            spawnPosition.y = 0;
+
+            GameObject mushroom = Instantiate(mushroomPrefab, spawnPosition, Quaternion.identity);
+            mushroom.GetComponent<MushroomComponent>().SetSpawner(this);
         }
     }
 }

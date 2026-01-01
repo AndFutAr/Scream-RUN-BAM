@@ -6,20 +6,31 @@ namespace Project.Scripts.PlayerLogic.RuneLogic
 {
     public enum SpellType
     {
+        none, 
+        empty,
         fire,
         water,
-        air,
-        earth,
+        electric,
+        ice,
+    }
+
+    public enum DamageEffect
+    {
+        fire,
+        water,
+        electric,
+        ice,
     }
     public abstract class Spell : MonoBehaviour
     {
         [SerializeField] protected SpellType spellType;
+        [SerializeField] protected DamageEffect damageEffect;
         [SerializeField] protected Vector3 center;
         [SerializeField] protected float duration, radius;
         [SerializeField] protected float damage;
         protected float factor;
 
-        [SerializeField] protected GameObject effectPrefab;
+        [SerializeField] protected GameObject effectPrefab, enemyEffectPrefab;
         [SerializeField] protected List<AudioSource> spellStartSound;
         [SerializeField] protected AudioSource spellSound;
 

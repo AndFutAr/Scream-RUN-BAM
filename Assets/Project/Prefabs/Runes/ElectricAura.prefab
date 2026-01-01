@@ -172,7 +172,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4826469074383462722}
-  - component: {fileID: 5074230470405699351}
+  - component: {fileID: 5483560094960926699}
   m_Layer: 0
   m_Name: ElectricAura
   m_TagString: Untagged
@@ -197,7 +197,7 @@ Transform:
   - {fileID: 3959337757170291238}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5074230470405699351
+--- !u!114 &5483560094960926699
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -206,21 +206,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 3700827064774337965}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0496c9a42067433a8b552c6a3968473c, type: 3}
+  m_Script: {fileID: 11500000, guid: 72e22be52d9b44d48c1b5107959c6203, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AoeSpell
-  spellType: 2
+  m_EditorClassIdentifier: Assembly-CSharp::LightningSpell
+  spellType: 4
+  damageEffect: 2
   center: {x: 0, y: 0, z: 0}
-  duration: 3
+  duration: 5
   radius: 10
-  damage: 15
+  damage: 3
   effectPrefab: {fileID: 7181977737543829360, guid: fde7daa1107742142b9bf0a6cda42d8c, type: 3}
+  enemyEffectPrefab: {fileID: 7307599720401206102, guid: ab59275d58a63a74db966f2f474ce87c, type: 3}
   spellStartSound:
   - {fileID: 3043102657813497130}
   - {fileID: 8917283777943931077}
   - {fileID: 8433266215338837898}
   spellSound: {fileID: 7341586572449751731}
-  isPlayer: 1
+  isPlayer: 0
 --- !u!1 &5026569508953483261
 GameObject:
   m_ObjectHideFlags: 0

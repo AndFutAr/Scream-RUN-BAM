@@ -13,8 +13,14 @@ namespace Project.Scripts.PlayerLogic
         private Vector3 moveDirection;
         private bool isMoving, isHitting;
         private float currentSpeed;
-        
-        public void SetHit(bool isHit) => isHitting = isHit;
+
+        public void SetHit(bool isHit)
+        {
+            isHitting = isHit;
+            hitRus.SetActive(isHit);
+            original.SetActive(!isHit);
+            moveRus.SetActive(!isHit);
+        }
 
         void Start()
         {
@@ -40,13 +46,13 @@ namespace Project.Scripts.PlayerLogic
             {
                 RotateTowardsMovement();
             }
-            
             UpdateAnimations();
         }
 
         void FixedUpdate()
         {
-            MovePlayer();
+            if (!isHitting && Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 5, LayerMask.GetMask("Tile")))
+                MovePlayer();
         }
 
         void HandleInput()

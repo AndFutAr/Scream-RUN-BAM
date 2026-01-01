@@ -8,165 +8,170 @@ using UnityEngine;
 
 namespace Project.Scripts.UI
 {
+    public enum ChosedType
+    {
+        numbers,
+        arrows,
+        mouse,
+    }
     public class BarkUI : MonoBehaviour
     {
-        private bool isRunes = false, isBarked = false;
+        [SerializeField] private bool isRunes = false;
         [SerializeField] private GameObject runes;
         [SerializeField] private List<GameObject> barks;
-        [SerializeField] private GameObject birchBark;
-        private Vector3 birchBarkPos;
+        [SerializeField] private GameObject barksCursor, pointer;
+        private Vector3 startRunesPos = Vector2.zero;
         private int curBirchBark = 0; 
+        private bool chosedRune = false;
+        private ChosedType chosedType;
         
         [SerializeField]private GameObject getBirchBarkText;
-        /*[SerializeField] private List<AudioSource> getRuneSound, chooseRuneSound;*/
         
         [SerializeField] private LineGeneration lineGeneration;
         [SerializeField] private SpellManager spellManager;
         [SerializeField] private PlayerComponent _playerComponent;
 
-        private void Start()
-        {
-            lineGeneration.enabled = false;
-        }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.R) && curBirchBark == 0)
+            if (Input.GetKey(KeyCode.Space) && isRunes)
             {
-                if (!isRunes) ChooseRune();
-                else UnchooseRune();
-            }
+                pointer.SetActive(true);
+                if (!chosedRune)
+                {
+                    if (Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.DownArrow) ||
+                        Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.RightArrow))
+                    {
+                        chosedRune = true;
+                        chosedType = ChosedType.arrows;
+                    }
 
-            if (isRunes)
-            {
-                if (Input.GetKeyDown(KeyCode.Alpha1))
-                {
-                    if (!isBarked/* && curBirchBark != 1*/)
+                    if (Input.GetKeyUp(KeyCode.Alpha1) || Input.GetKeyUp(KeyCode.Alpha2) ||
+                        Input.GetKeyUp(KeyCode.Alpha3) || Input.GetKeyUp(KeyCode.Alpha4))
                     {
-                        if (_playerComponent.GetBirchBark()/* || curBirchBark != 0*/)
-                            spellManager.CastSpell(1, 1);
-                        else
-                            StartCoroutine(ShowGetText());
+                        chosedRune = true;
+                        chosedType = ChosedType.numbers;
                     }
-                    /*else if (curBirchBark == 1)
-                    {
-                        StartCoroutine(EndDrawRunes());
-                    }*/
-                }
-                else if (Input.GetKeyDown(KeyCode.Alpha2))
-                {
-                    if (!isBarked/* && curBirchBark != 2*/)
-                    {
-                        if (_playerComponent.GetBirchBark()/* || curBirchBark != 0*/)
-                            spellManager.CastSpell(2, 1);
-                        else
-                            StartCoroutine(ShowGetText());
-                    }
-                    /*else if (curBirchBark == 2)
-                    {
-                        StartCoroutine(EndDrawRunes());
-                    }*/
-                }
-                else if (Input.GetKeyDown(KeyCode.Alpha3))
-                {
-                    if (!isBarked/* && curBirchBark != 3*/)
-                    {
-                        if (_playerComponent.GetBirchBark()/* || curBirchBark != 0*/)
-                            spellManager.CastSpell(3, 1);
-                        else
-                            StartCoroutine(ShowGetText());
-                    }
-                    /*else if (curBirchBark == 3)
-                    {
-                        StartCoroutine(EndDrawRunes());
-                    }*/
                 }
 
-                if (Input.GetKeyDown(KeyCode.Escape))
+                if (chosedRune)
                 {
-                    if (lineGeneration.enabled == true)
+                    if (chosedType == ChosedType.numbers)
                     {
-                        if (!isBarked)
+                        if (Input.GetKeyUp(KeyCode.Alpha1)) curBirchBark = 1;
+                        if (Input.GetKeyUp(KeyCode.Alpha2)) curBirchBark = 2;
+                        if (Input.GetKeyUp(KeyCode.Alpha3)) curBirchBark = 3;
+                        if (Input.GetKeyUp(KeyCode.Alpha4)) curBirchBark = 4;
+                    }
+                    else if (chosedType == ChosedType.arrows)
+                    {
+                        switch (curBirchBark)
                         {
-                            StartCoroutine(EndDrawRunes());
-                            _playerComponent.IncreaseBirchBackCount(1);
+                            case 0:
+                                if (Input.GetKeyUp(KeyCode.LeftArrow)) curBirchBark = 1;
+                                if (Input.GetKeyUp(KeyCode.UpArrow)) curBirchBark = 2;
+                                if (Input.GetKeyUp(KeyCode.RightArrow)) curBirchBark = 3;
+                                if (Input.GetKeyUp(KeyCode.DownArrow)) curBirchBark = 4;
+                                break;
+                            case 1:
+                                if (Input.GetKeyUp(KeyCode.LeftArrow)) curBirchBark = 1;
+                                if (Input.GetKeyUp(KeyCode.UpArrow)) curBirchBark = 2;
+                                if (Input.GetKeyUp(KeyCode.RightArrow)) curBirchBark = 0;
+                                if (Input.GetKeyUp(KeyCode.DownArrow)) curBirchBark = 4;
+                                break;    
+                            case 2:
+                                if (Input.GetKeyUp(KeyCode.LeftArrow)) curBirchBark = 1;
+                                if (Input.GetKeyUp(KeyCode.UpArrow)) curBirchBark = 2;
+                                if (Input.GetKeyUp(KeyCode.RightArrow)) curBirchBark = 3;
+                                if (Input.GetKeyUp(KeyCode.DownArrow)) curBirchBark = 0;
+                                break;
+                            case 3:
+                                if (Input.GetKeyUp(KeyCode.LeftArrow)) curBirchBark = 0;
+                                if (Input.GetKeyUp(KeyCode.UpArrow)) curBirchBark = 2;
+                                if (Input.GetKeyUp(KeyCode.RightArrow)) curBirchBark = 3;
+                                if (Input.GetKeyUp(KeyCode.DownArrow)) curBirchBark = 4;
+                                break;
+                            case 4:
+                                if (Input.GetKeyUp(KeyCode.LeftArrow)) curBirchBark = 1;
+                                if (Input.GetKeyUp(KeyCode.UpArrow)) curBirchBark = 0;
+                                if (Input.GetKeyUp(KeyCode.RightArrow)) curBirchBark = 3;
+                                if (Input.GetKeyUp(KeyCode.DownArrow)) curBirchBark = 4;
+                                break;
                         }
                     }
-                    else
-                        UnchooseRune();
                 }
-
-                if (Input.GetKeyDown(KeyCode.F) && lineGeneration.enabled == true)
+                else
                 {
-                    spellManager.CastSpell(curBirchBark, 1);
-                    StartCoroutine(EndDrawRunes());
+                    chosedType = ChosedType.mouse;
+                    
+                    Vector3 minRuneDistance, mouseDistance;
+                    mouseDistance = (Input.mousePosition - startRunesPos) / 2f;
+                    Debug.Log(mouseDistance);
+                    float xDist, yDist;
+                    xDist = Mathf.Clamp(mouseDistance.x, -300, 300);
+                    yDist = Mathf.Clamp(mouseDistance.y, -200, 200);
+                    barksCursor.transform.localPosition = new Vector3(xDist, yDist, 0);
+
+                    minRuneDistance = barks[0].transform.position - runes.transform.position;
+                    for (int i = 0; i < barks.Count; i++)
+                    {
+                        Vector3 barkPos = barks[i].transform.position - runes.transform.position;
+                        if (Vector3.Distance(barkPos, mouseDistance) <=
+                            Vector3.Distance(mouseDistance, minRuneDistance))
+                        {
+                            minRuneDistance = barkPos;
+                            curBirchBark = i;
+                            pointer.transform.position = barks[i].transform.position;
+                        }
+                    }
                 }
+            }
+            
+            if (Input.GetKeyDown(KeyCode.Space) && !isRunes)
+            {
+                StartRune();
+            }
+            else if ((Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.Space)) && isRunes)
+            {
+                if (_playerComponent.GetBirchBark())
+                {
+                    spellManager.CastSpell(curBirchBark, 1f);
+                    EndRune();
+                }
+                else
+                {
+                    EndRune();
+                    StartCoroutine(BirchBarkText());
+                }
+            }
+            else if (Input.GetKeyUp(KeyCode.Escape) && isRunes)
+            {
+                EndRune();
             }
         }
 
-        IEnumerator ShowGetText()
+        IEnumerator BirchBarkText()
         {
             getBirchBarkText.SetActive(true);
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
             getBirchBarkText.SetActive(false);
         }
-
-        public void ChooseRune()
+        
+        public void StartRune()
         {
             isRunes = true;
-            /*int chance = UnityEngine.Random.Range(0, getRuneSound.Count);
-            getRuneSound[chance].Play();*/
-            runes.transform.DOLocalMoveY(-720, 0.5f);
+            runes.SetActive(true);
+            barksCursor.transform.localPosition = new Vector3(0, 0, 0);
+            startRunesPos = Input.mousePosition;
         }
-        public void UnchooseRune()
+        public void EndRune()
         {
             isRunes = false;
-            /*int chance = UnityEngine.Random.Range(0, getRuneSound.Count);
-            getRuneSound[chance].Play();*/
-            runes.transform.DOLocalMoveY(-1220, 0.5f);
-        }
-
-        IEnumerator EndDrawRunes()
-        {
-            isBarked = true;
-            lineGeneration.enabled = false;
+            chosedType = ChosedType.mouse;
+            pointer.SetActive(false);
+            runes.SetActive(false);
             curBirchBark = 0;
-            
-            /*int chance = UnityEngine.Random.Range(0, chooseRuneSound.Count);
-            chooseRuneSound[chance].Play();*/
-            birchBark.transform.DOMove(birchBarkPos, 0.5f);
-            birchBark.transform.DOScale(new Vector3(1, 1, 1), 0.5f);
-            birchBark.transform.GetChild(0).gameObject.SetActive(true);
-            birchBark.transform.GetChild(1).gameObject.SetActive(false);
-            yield return new WaitForSeconds(0.5f);
-            birchBark.transform.SetParent(runes.transform);
-            isBarked = false;
-        }
-        IEnumerator StartDrawRunes(int index)
-        {
-            isBarked = true;
-            if (birchBark != null)
-            {
-                yield return StartCoroutine(EndDrawRunes());
-                isBarked = true;
-            }
-            
-            curBirchBark = index + 1;
-            birchBark = barks[index];
-            birchBarkPos = birchBark.transform.position;
-            birchBark.transform.SetParent(birchBark.transform.parent.transform.parent);
-            birchBark.transform.SetSiblingIndex(index);
-            /*int chance = UnityEngine.Random.Range(0, chooseRuneSound.Count);
-            chooseRuneSound[chance].Play();*/
-            
-            birchBark.transform.DOLocalMove(new Vector3(0, 0, 0), 0.5f);
-            birchBark.transform.DOScale(new Vector3(2, 2, 2), 0.5f);
-            birchBark.transform.GetChild(0).gameObject.SetActive(false);
-            birchBark.transform.GetChild(1).gameObject.SetActive(true);
-            yield return new WaitForSeconds(0.5f);
-            lineGeneration.enabled = true;
-            
-            isBarked = false;
+            chosedRune = false;
         }
     }
 }
